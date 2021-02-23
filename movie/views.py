@@ -1,16 +1,23 @@
 from django.shortcuts import render
-from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView
+from django.views.generic import ListView, DetailView
 from django.views.generic.base import View
 
 from movie.models import Movie
 
 
 class MovieView(ListView):
-    """Описание фильма"""
+    """Вывод всех фильмов"""
     model = Movie
-    template_name = 'movie/movies.html'
+    queryset = Movie.objects.filter(draft=False)
 
     def get_context_data(self, **kwargs):
         context = super(MovieView, self).get_context_data(**kwargs)
         context['title'] = 'Главная'
         return context
+
+
+class MovieDetailView(DetailView):
+    """Описание определенного фильма"""
+    model = Movie
+    slug_field = 'url'
