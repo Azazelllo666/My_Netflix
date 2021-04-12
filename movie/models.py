@@ -1,6 +1,6 @@
 from django.db import models
 
-from datetime import date
+from datetime import date, timedelta
 
 from django.urls import reverse
 
@@ -28,6 +28,12 @@ class Actor(models.Model):
 
     def __str__(self):
         return self.name
+
+    def calc_age(self):
+        result = (date.today() - self.age) // timedelta(days=365.2425)
+        return result
+
+    calc_age.short_description = "Возраст"
 
     class Meta:
         verbose_name = 'Актёры и режиссеры'
@@ -72,6 +78,9 @@ class Movie(models.Model):
 
     def get_absolute_url(self):
         return reverse('movie_detail', kwargs={'slug': self.url})
+
+    def get_review(self):
+        return self.reviews_set.filter(parent__isnull=True)
 
     class Meta:
         verbose_name = 'Фильм'
